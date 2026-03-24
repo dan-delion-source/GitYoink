@@ -8,100 +8,23 @@ from textual.widgets.tree import TreeNode as TextualTreeNode
 from .tree_model import TreeNode, SelectionState, NodeType
 
 
-# Icons for the tree
-ICONS = {
-    "dir_open": "📂",
-    "dir_closed": "📁",
-    "file": "📄",
-    "selected": "☑",       # ☑
-    "unselected": "☐",     # ☐
-    "partial": "▣",        # ▣ partial selection
-}
-
-# File extension → icon mapping for visual flair
-FILE_ICONS: dict[str, str] = {
-    ".py": "🐍",
-    ".js": "🟨",
-    ".ts": "🔷",
-    ".jsx": "⚛️",
-    ".tsx": "⚛️",
-    ".json": "📋",
-    ".md": "📝",
-    ".txt": "📃",
-    ".yml": "⚙️",
-    ".yaml": "⚙️",
-    ".toml": "⚙️",
-    ".cfg": "⚙️",
-    ".ini": "⚙️",
-    ".html": "🌐",
-    ".css": "🎨",
-    ".scss": "🎨",
-    ".rs": "🦀",
-    ".go": "🐹",
-    ".java": "☕",
-    ".rb": "💎",
-    ".sh": "🔧",
-    ".bash": "🔧",
-    ".zsh": "🔧",
-    ".dockerfile": "🐳",
-    ".docker": "🐳",
-    ".png": "🖼️",
-    ".jpg": "🖼️",
-    ".jpeg": "🖼️",
-    ".gif": "🖼️",
-    ".svg": "🖼️",
-    ".ico": "🖼️",
-    ".lock": "🔒",
-    ".env": "🔐",
-    ".gitignore": "🚫",
-    ".license": "📜",
-}
-
-
-def get_file_icon(name: str) -> str:
-    """Get an appropriate icon for a filename."""
-    name_lower = name.lower()
-    # Check full name first (e.g., Dockerfile, .gitignore)
-    if name_lower in FILE_ICONS:
-        return FILE_ICONS[name_lower]
-    if name_lower == "dockerfile":
-        return "🐳"
-    if name_lower == "makefile":
-        return "🔧"
-    if name_lower.startswith("license"):
-        return "📜"
-    if name_lower.startswith("readme"):
-        return "📝"
-
-    # Check extension
-    for ext, icon in FILE_ICONS.items():
-        if name_lower.endswith(ext):
-            return icon
-    return "📄"
-
 
 def format_node_label(node: TreeNode, expanded: bool = False) -> str:
-    """Format a tree node label with checkbox and icon."""
+    """Format a tree node label with a simple ASCII checkbox."""
     # Selection checkbox
     if node.selection == SelectionState.SELECTED:
-        checkbox = ICONS["selected"]
+        checkbox = "[x]"
     elif node.selection == SelectionState.PARTIAL:
-        checkbox = ICONS["partial"]
+        checkbox = "[-]"
     else:
-        checkbox = ICONS["unselected"]
-
-    # Node icon
-    if node.is_dir:
-        icon = ICONS["dir_open"] if expanded else ICONS["dir_closed"]
-    else:
-        icon = get_file_icon(node.name)
+        checkbox = "[ ]"
 
     # Size suffix for files
     size_str = ""
     if node.is_file and node.size > 0:
         size_str = f" ({_format_size(node.size)})"
 
-    return f"{checkbox} {icon} {node.name}{size_str}"
+    return f"{checkbox} {node.name}{size_str}"
 
 
 def _format_size(size_bytes: int) -> str:
