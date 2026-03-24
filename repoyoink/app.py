@@ -12,7 +12,7 @@ from pathlib import Path
 from textual import on, work
 from textual.app import App, ComposeResult
 from textual.binding import Binding
-from textual.containers import Container, Horizontal, Vertical
+from textual.containers import Center, Container, Horizontal, Vertical
 from textual.screen import Screen
 from textual.widgets import (
     Footer,
@@ -400,7 +400,8 @@ class DownloadScreen(Screen):
     def compose(self) -> ComposeResult:
         yield Container(
             Static("⬇ Downloading Files", id="download-title"),
-            ProgressBar(total=100, id="download-progress"),
+            ProgressBar(total=100, id="download-progress", show_percentage=False, show_eta=False),
+            Static("", id="download-percentage"),
             Static("Preparing...", id="download-status"),
             Static("", id="download-file"),
             Static("", id="download-done"),
@@ -429,8 +430,13 @@ class DownloadScreen(Screen):
 
         async def on_progress(p: DownloadProgress) -> None:
             progress_bar.update(progress=p.completed)
+            # Calculate percentage
+            percentage = (p.completed / p.total) * 100 if p.total > 0 else 0
+            self.query_one("#download-percentage", Static).update(
+                f"[bold]{percentage:.0f}%[/] [dim]({p.completed}/{p.total})[/]"
+            )
             self.query_one("#download-status", Static).update(
-                f"{p.completed}/{p.total} files downloaded"
+                "Downloading..."
             )
             self.query_one("#download-file", Static).update(
                 f"[dim]{p.current_file}[/]"

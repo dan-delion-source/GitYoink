@@ -184,19 +184,26 @@ DownloadScreen {
 }
 
 #download-progress {
+    width: 70%;
+    margin-bottom: 1;
+}
+
+#download-percentage {
+    text-align: center;
     width: 100%;
-    margin-bottom: 2;
+    margin-bottom: 1;
+    color: $text;
 }
 
 #download-status {
     text-align: center;
-    color: $text;
+    color: $text-muted;
     width: 100%;
 }
 
 #download-file {
     text-align: center;
-    color: $text-muted;
+    color: $dim;
     width: 100%;
     margin-top: 1;
 }
