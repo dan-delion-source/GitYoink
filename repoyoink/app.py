@@ -429,7 +429,7 @@ class DownloadScreen(Screen):
         progress_bar.update(total=total, progress=0)
 
         async def on_progress(p: DownloadProgress) -> None:
-            progress_bar.update(progress=p.completed)
+            progress_bar.progress = p.completed
             # Calculate percentage
             percentage = (p.completed / p.total) * 100 if p.total > 0 else 0
             self.query_one("#download-percentage", Static).update(

@@ -185,7 +185,7 @@ DownloadScreen {
 
 #download-progress {
     width: 70%;
-    margin-bottom: 1;
+    margin: 0 auto 1 auto;
 }
 
 #download-percentage {
