@@ -23,3 +23,6 @@ repoyoink = "repoyoink.app:main"
 
 [tool.setuptools.packages.find]
 include = ["repoyoink*"]
+
+[tool.setuptools.package-data]
+repoyoink = ["*.tcss"]
