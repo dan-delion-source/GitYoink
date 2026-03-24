@@ -203,7 +203,7 @@ DownloadScreen {
 
 #download-file {
     text-align: center;
-    color: $dim;
+    color: $text-muted;
     width: 100%;
     margin-top: 1;
 }
