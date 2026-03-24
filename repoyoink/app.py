@@ -400,7 +400,7 @@ class DownloadScreen(Screen):
     def compose(self) -> ComposeResult:
         yield Container(
             Static("⬇ Downloading Files", id="download-title"),
-            ProgressBar(total=100, id="download-progress", show_percentage=False, show_eta=False),
+            Center(ProgressBar(total=100, id="download-progress", show_percentage=False, show_eta=False)),
             Static("", id="download-percentage"),
             Static("Preparing...", id="download-status"),
             Static("", id="download-file"),
