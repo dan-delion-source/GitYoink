@@ -3,23 +3,23 @@
 
 Screen {
     background: $surface;
+    align: center middle;
 }
 
 /* ─── URL Input Screen ─── */
 
-#url-screen {
+URLScreen {
     align: center middle;
-    width: 100%;
-    height: 100%;
 }
 
 #url-container {
-    width: 80;
+    width: 80%;
+    max-width: 120;
     height: auto;
-    max-height: 20;
-    border: round $primary;
-    padding: 1 2;
+    border: thick $primary;
+    padding: 2 4;
     background: $surface;
+    margin: 1 2;
 }
 
 #logo-text {
@@ -27,19 +27,19 @@ Screen {
     width: 100%;
     color: $text;
     text-style: bold;
-    margin-bottom: 1;
+    margin-bottom: 2;
 }
 
 #url-subtitle {
     text-align: center;
     width: 100%;
     color: $text-muted;
-    margin-bottom: 1;
+    margin-bottom: 2;
 }
 
 #url-input {
     width: 100%;
-    margin-bottom: 1;
+    margin-bottom: 2;
 }
 
 #url-error {
@@ -47,6 +47,7 @@ Screen {
     text-align: center;
     width: 100%;
     display: none;
+    margin-bottom: 1;
 }
 
 #url-status {
@@ -54,6 +55,7 @@ Screen {
     text-align: center;
     width: 100%;
     display: none;
+    margin-bottom: 1;
 }
 
 #url-help {
@@ -74,10 +76,10 @@ Screen {
 #explorer-header {
     dock: top;
     width: 100%;
-    height: 3;
+    height: auto;
     background: $primary;
     color: $text;
-    padding: 0 2;
+    padding: 1 2;
     layout: horizontal;
 }
 
@@ -103,7 +105,8 @@ Screen {
 #tree-panel {
     width: 1fr;
     height: 100%;
-    border-right: solid $primary-darken-2;
+    border-right: thick $primary-darken-2;
+    padding: 0 1;
 }
 
 #repo-tree {
@@ -116,18 +119,20 @@ Screen {
     width: 50%;
     height: 100%;
     display: none;
-    padding: 0 1;
+    padding: 0 2;
     overflow-y: auto;
+    border-left: thick $primary-darken-2;
 }
 
 #preview-title {
     dock: top;
     width: 100%;
-    height: 1;
+    height: auto;
     background: $primary-darken-1;
     color: $text;
     text-style: bold;
-    padding: 0 1;
+    padding: 1 2;
+    margin-bottom: 1;
 }
 
 #preview-content {
@@ -140,33 +145,34 @@ Screen {
 #search-bar {
     dock: bottom;
     width: 100%;
+    margin: 1 2;
     display: none;
 }
 
 #footer-bar {
     dock: bottom;
     width: 100%;
-    height: 1;
+    height: auto;
     background: $primary-darken-3;
     color: $text-muted;
-    padding: 0 1;
+    padding: 1 2;
+    text-align: center;
 }
 
 /* ─── Download Screen ─── */
 
-#download-screen {
+DownloadScreen {
     align: center middle;
-    width: 100%;
-    height: 100%;
 }
 
 #download-container {
-    width: 70;
+    width: 80%;
+    max-width: 120;
     height: auto;
-    max-height: 20;
-    border: round $success;
-    padding: 1 2;
+    border: thick $success;
+    padding: 2 4;
     background: $surface;
+    margin: 1 2;
 }
 
 #download-title {
@@ -174,12 +180,12 @@ Screen {
     text-style: bold;
     color: $success;
     width: 100%;
-    margin-bottom: 1;
+    margin-bottom: 2;
 }
 
 #download-progress {
     width: 100%;
-    margin-bottom: 1;
+    margin-bottom: 2;
 }
 
 #download-status {
@@ -199,7 +205,7 @@ Screen {
     text-align: center;
     color: $success;
     width: 100%;
-    margin-top: 1;
+    margin-top: 2;
     display: none;
 }
 
