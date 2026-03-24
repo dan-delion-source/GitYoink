@@ -34,9 +34,9 @@ def get_paths():
     return install_dir, bin_dir, venv_bin, shim_name
 
 def create_venv(install_dir):
-    print(f"📦 Creating virtual environment in {install_dir}...")
+    print(f"[*] Creating virtual environment in {install_dir}...")
     if install_dir.exists():
-        print(f"🗑️  Removing existing installation at {install_dir}...")
+        print(f"[-] Removing existing installation at {install_dir}...")
         shutil.rmtree(install_dir)
     
     builder = venv.EnvBuilder(with_pip=True, clear=True)
@@ -44,7 +44,7 @@ def create_venv(install_dir):
 
 def install_package(install_dir):
     system = platform.system()
-    print(f"📥 Installing {APP_NAME} dependencies and package...")
+    print(f"[*] Installing {APP_NAME} dependencies and package...")
     
     if system == "Windows":
         pip_exe = install_dir / "Scripts" / "pip.exe"
@@ -56,12 +56,12 @@ def install_package(install_dir):
     try:
         subprocess.check_call([str(pip_exe), "install", str(src_dir)], stdout=subprocess.DEVNULL)
     except subprocess.CalledProcessError as e:
-        print(f"❌ Failed to install package: {e}")
+        print(f"[!] Failed to install package: {e}")
         sys.exit(1)
 
 def create_shim(bin_dir, venv_bin, shim_name):
     system = platform.system()
-    print(f"🔗 Creating executable wrapper '{shim_name}' in {bin_dir}...")
+    print(f"[*] Creating executable wrapper '{shim_name}' in {bin_dir}...")
     
     bin_dir.mkdir(parents=True, exist_ok=True)
     shim_path = bin_dir / shim_name
@@ -78,7 +78,7 @@ def create_shim(bin_dir, venv_bin, shim_name):
 
 def create_desktop_shortcut(bin_dir, shim_name):
     system = platform.system()
-    print("🖥️  Creating desktop shortcut...")
+    print("[*] Creating desktop shortcut...")
     home = Path.home()
     
     if system == "Linux":
@@ -123,9 +123,9 @@ def check_path_instructions(bin_dir):
     system = platform.system()
     path_env = os.environ.get("PATH", "")
     if str(bin_dir) not in path_env:
-        print(f"\n⚠️  IMPORTANT: The directory {bin_dir} is not in your PATH.")
+        print(f"\n[!] IMPORTANT: The directory {bin_dir} is not in your PATH.")
         if system == "Windows":
-            print(f"   Please add {bin_dir} to your user PATH environment variable to run '{APP_NAME}' from any terminal.")
+            print(f"    Please add {bin_dir} to your user PATH environment variable to run '{APP_NAME}' from any terminal.")
         elif system == "Darwin":
             print(f"   Please add the following line to your ~/.zprofile or ~/.bash_profile:")
             print(f"   export PATH=\"{bin_dir}:$PATH\"")
@@ -139,7 +139,7 @@ def uninstall():
     system = platform.system()
     home = Path.home()
     
-    print(f"🗑️  Uninstalling {APP_NAME}...")
+    print(f"[-] Uninstalling {APP_NAME}...")
     
     removed = False
     
@@ -174,9 +174,9 @@ def uninstall():
             removed = True
 
     if not removed:
-        print(f"   {APP_NAME} is not currently installed.")
+        print(f"    {APP_NAME} is not currently installed.")
     else:
-        print(f"✅ Successfully uninstalled {APP_NAME}.")
+        print(f"[+] Successfully uninstalled {APP_NAME}.")
 
 def main():
     parser = argparse.ArgumentParser(description=f"{APP_NAME} installation script")
@@ -187,7 +187,7 @@ def main():
         uninstall()
         sys.exit(0)
         
-    print(f"🚀 Starting installation of {APP_NAME}...")
+    print(f"[*] Starting installation of {APP_NAME}...")
     
     install_dir, bin_dir, venv_bin, shim_name = get_paths()
     
@@ -196,7 +196,7 @@ def main():
     shim_path = create_shim(bin_dir, venv_bin, shim_name)
     create_desktop_shortcut(bin_dir, shim_name)
     
-    print(f"✅ Installation complete! You can now run '{APP_NAME}' from your terminal.")
+    print(f"[+] Installation complete! You can now run '{APP_NAME}' from your terminal.")
     
     check_path_instructions(bin_dir)
 

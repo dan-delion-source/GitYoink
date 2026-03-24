@@ -13,11 +13,11 @@ def format_node_label(node: TreeNode, expanded: bool = False) -> str:
     """Format a tree node label with a simple ASCII checkbox."""
     # Selection checkbox
     if node.selection == SelectionState.SELECTED:
-        checkbox = "[x]"
+        checkbox = "\\[x]"
     elif node.selection == SelectionState.PARTIAL:
-        checkbox = "[-]"
+        checkbox = "\\[-]"
     else:
-        checkbox = "[ ]"
+        checkbox = "\\[ ]"
 
     # Size suffix for files
     size_str = ""
