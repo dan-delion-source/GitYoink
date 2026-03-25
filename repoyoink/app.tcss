@@ -138,14 +138,12 @@ URLScreen {
 #preview-content {
     width: 100%;
     height: 1fr;
-    overflow-y: auto;
-    padding: 0 1;
+    border: none;
 }
 
 #search-bar {
-    dock: bottom;
     width: 100%;
-    margin: 1 2;
+    margin-bottom: 1;
     display: none;
 }
 

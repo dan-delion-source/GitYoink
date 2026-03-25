@@ -22,6 +22,7 @@ from textual.widgets import (
     LoadingIndicator,
     ProgressBar,
     Static,
+    TextArea,
     Tree,
 )
 from textual.widgets.tree import TreeNode as TextualTreeNode
@@ -162,6 +163,10 @@ class ExplorerScreen(Screen):
                 Static("", id="header-stats"),
                 id="explorer-header",
             ),
+            Input(
+                placeholder="🔍 Type to search... (Esc to close)",
+                id="search-bar",
+            ),
             Horizontal(
                 Container(
                     RepoTree(f"{self.owner}/{self.repo}", id="repo-tree"),
@@ -169,14 +174,10 @@ class ExplorerScreen(Screen):
                 ),
                 Container(
                     Static("", id="preview-title"),
-                    Static("", id="preview-content"),
+                    TextArea("", id="preview-content", read_only=True),
                     id="preview-panel",
                 ),
                 id="explorer-body",
-            ),
-            Input(
-                placeholder="🔍 Type to search... (Esc to close)",
-                id="search-bar",
             ),
             Static(
                 "[bold]Tab[/] Select • [bold]Ctrl+S[/] Select All • "
@@ -229,8 +230,8 @@ class ExplorerScreen(Screen):
         else:
             search_bar.display = True
             search_bar.value = ""
-            search_bar.focus()
             self._search_visible = True
+            self.call_after_refresh(search_bar.focus)
 
     @on(Input.Changed, "#search-bar")
     def on_search_changed(self, event: Input.Changed) -> None:
@@ -308,28 +309,30 @@ class ExplorerScreen(Screen):
         self.query_one("#preview-title", Static).update(
             f" 📄 {data.name}"
         )
-        self.query_one("#preview-content", Static).update(
-            "[dim]Loading...[/]"
-        )
+        self.query_one("#preview-content", TextArea).text = "Loading..."
         self._load_preview(data.path)
 
     @work(exclusive=True)
     async def _load_preview(self, path: str) -> None:
         """Load file content for preview."""
+        binary_exts = {".png", ".jpg", ".jpeg", ".gif", ".bmp", ".ico", ".webp", ".pdf", ".zip", ".tar", ".gz", ".pyc", ".exe"}
+        ext = Path(path).suffix.lower()
+        if ext in binary_exts:
+            self.query_one("#preview-content", TextArea).text = "Preview not available for binary/image files."
+            return
+
         try:
             content = await self.client.get_file_content(
                 self.owner, self.repo, path, self.branch
             )
             # Truncate very long files
             lines = content.split("\n")
-            if len(lines) > 200:
-                content = "\n".join(lines[:200]) + f"\n\n... ({len(lines) - 200} more lines)"
+            if len(lines) > 500:
+                content = "\n".join(lines[:500]) + f"\n\n... ({len(lines) - 500} more lines)"
 
-            self.query_one("#preview-content", Static).update(content)
+            self.query_one("#preview-content", TextArea).text = content
         except Exception as exc:
-            self.query_one("#preview-content", Static).update(
-                f"[bold red]Error:[/] {exc}"
-            )
+            self.query_one("#preview-content", TextArea).text = f"Error loading preview: {exc}"
 
     # ── Tree Events ──
 
