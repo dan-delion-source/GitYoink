@@ -47,17 +47,25 @@ class RepoTree(TextualTree):
         self._node_map: dict[str, TreeNode] = {}
         self._textual_node_map: dict[str, TextualTreeNode] = {}
 
-    def load_tree(self, root: TreeNode) -> None:
-        """Load a TreeNode hierarchy into the Textual tree widget."""
+    def load_tree(self, root: TreeNode, query: str = "") -> None:
+        """Load a TreeNode hierarchy into the Textual tree widget.
+
+        If query is provided, only nodes whose name contains the query
+        (case-insensitive) are included. Parent directories of matching
+        nodes are always shown so the hierarchy is preserved.
+        """
         self._tree_data = root
         self._node_map.clear()
         self._textual_node_map.clear()
 
         self.clear()
-        self.root.set_label(f"📦 {self.root.label}")
+        self.root.set_label(f"{self.root.label}")
         self.root.data = root
 
-        self._add_children(self.root, root)
+        if query:
+            self._add_children_filtered(self.root, root, query.lower())
+        else:
+            self._add_children(self.root, root)
         self.root.expand()
 
     def _add_children(
@@ -75,6 +83,36 @@ class RepoTree(TextualTree):
             else:
                 t_node = textual_parent.add_leaf(label, data=child)
                 self._textual_node_map[child.path] = t_node
+
+    def _add_children_filtered(
+        self, textual_parent: TextualTreeNode, data_parent: TreeNode, query: str
+    ) -> None:
+        """Recursively add only children matching the search query."""
+        for child in data_parent.children:
+            if child.is_dir:
+                # Include directory only if it or any descendant matches
+                if self._subtree_matches(child, query):
+                    label = format_node_label(child)
+                    self._node_map[child.path] = child
+                    t_node = textual_parent.add(label, data=child)
+                    self._textual_node_map[child.path] = t_node
+                    self._add_children_filtered(t_node, child, query)
+                    t_node.expand()
+            else:
+                if query in child.name.lower():
+                    label = format_node_label(child)
+                    self._node_map[child.path] = child
+                    t_node = textual_parent.add_leaf(label, data=child)
+                    self._textual_node_map[child.path] = t_node
+
+    def _subtree_matches(self, node: TreeNode, query: str) -> bool:
+        """Check if a node or any of its descendants match the query."""
+        if query in node.name.lower():
+            return True
+        for child in node.children:
+            if self._subtree_matches(child, query):
+                return True
+        return False
 
     def toggle_node_selection(self, textual_node: TextualTreeNode) -> None:
         """Toggle selection on a node and update the display."""

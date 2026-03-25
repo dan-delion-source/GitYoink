@@ -235,52 +235,10 @@ class ExplorerScreen(Screen):
 
     @on(Input.Changed, "#search-bar")
     def on_search_changed(self, event: Input.Changed) -> None:
-        """Filter tree based on search query."""
+        """Filter tree based on search query by rebuilding it."""
         query = event.value.strip()
         tree = self.query_one("#repo-tree", RepoTree)
-
-        if not query:
-            # Show all nodes
-            self._show_all_nodes(tree.root)
-            return
-
-        # Filter nodes
-        self._filter_nodes(tree.root, query.lower())
-
-    def _filter_nodes(self, node: TextualTreeNode, query: str) -> bool:
-        """Recursively show/hide nodes based on search query. Returns True if visible."""
-        data: TreeNode | None = node.data
-        if data is None:
-            # Root node - process children
-            any_visible = False
-            for child in node.children:
-                if self._filter_nodes(child, query):
-                    any_visible = True
-            return any_visible
-
-        name_matches = query in data.name.lower()
-
-        if data.is_dir:
-            any_child_visible = False
-            for child in node.children:
-                if self._filter_nodes(child, query):
-                    any_child_visible = True
-
-            visible = name_matches or any_child_visible
-            node.allow_expand = visible
-            if visible and any_child_visible:
-                node.expand()
-            return visible
-        else:
-            return name_matches
-
-    def _show_all_nodes(self, node: TextualTreeNode) -> None:
-        """Show all nodes (reset filter)."""
-        data: TreeNode | None = node.data
-        if data and data.is_dir:
-            node.allow_expand = True
-        for child in node.children:
-            self._show_all_nodes(child)
+        tree.load_tree(self.tree_data, query)
 
     @on(Input.Submitted, "#search-bar")
     def on_search_submitted(self, event: Input.Submitted) -> None:
