@@ -54,8 +54,11 @@ class URLScreen(Screen):
     """Screen for entering a GitHub repository URL."""
 
     BINDINGS = [
-        Binding("escape", "quit", "Quit", show=True),
+        Binding("escape", "quit", "Quit", show=True, priority=True),
     ]
+
+    def action_quit(self) -> None:
+        self.app.exit()
 
     def compose(self) -> ComposeResult:
         yield Container(
