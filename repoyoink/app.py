@@ -101,14 +101,14 @@ class URLScreen(Screen):
 
     def _show_error(self, msg: str) -> None:
         err = self.query_one("#url-error", Static)
-        err.update(f"[bold red]✗[/] {msg}")
+        err.update(f"[bold red]X[/] {msg}")
         err.display = True
         status = self.query_one("#url-status", Static)
         status.display = False
 
     def _show_status(self, msg: str) -> None:
         status = self.query_one("#url-status", Static)
-        status.update(f"[bold cyan]⟳[/] {msg}")
+        status.update(f"[bold cyan][*][/] {msg}")
         status.display = True
         err = self.query_one("#url-error", Static)
         err.display = False
@@ -157,14 +157,14 @@ class ExplorerScreen(Screen):
         yield Container(
             Horizontal(
                 Static(
-                    f"[bold]📦 {self.owner}/{self.repo}[/] [dim]({self.branch})[/]",
+                    f"[bold]{self.owner}/{self.repo}[/] [dim]({self.branch})[/]",
                     id="header-title",
                 ),
                 Static("", id="header-stats"),
                 id="explorer-header",
             ),
             Input(
-                placeholder="🔍 Type to search... (Esc to close)",
+                placeholder="Search files... (Esc to close)",
                 id="search-bar",
             ),
             Horizontal(
@@ -307,19 +307,43 @@ class ExplorerScreen(Screen):
         self._preview_visible = True
         self.query_one("#preview-panel").display = True
         self.query_one("#preview-title", Static).update(
-            f" 📄 {data.name}"
+            f" FILE: {data.name}"
         )
         self.query_one("#preview-content", TextArea).text = "Loading..."
         self._load_preview(data.path)
 
     @work(exclusive=True)
     async def _load_preview(self, path: str) -> None:
-        """Load file content for preview."""
+        """Load file content for preview with syntax highlighting."""
         binary_exts = {".png", ".jpg", ".jpeg", ".gif", ".bmp", ".ico", ".webp", ".pdf", ".zip", ".tar", ".gz", ".pyc", ".exe"}
         ext = Path(path).suffix.lower()
         if ext in binary_exts:
             self.query_one("#preview-content", TextArea).text = "Preview not available for binary/image files."
             return
+
+        # Map extensions to TextArea languages
+        lang_map = {
+            ".py": "python",
+            ".pyw": "python",
+            ".md": "markdown",
+            ".json": "json",
+            ".js": "javascript",
+            ".ts": "typescript",
+            ".css": "css",
+            ".html": "html",
+            ".htm": "html",
+            ".yaml": "yaml",
+            ".yml": "yaml",
+            ".sql": "sql",
+            ".rs": "rust",
+            ".go": "go",
+            ".java": "java",
+            ".c": "c",
+            ".h": "c",
+            ".cpp": "cpp",
+            ".hpp": "cpp",
+        }
+        language = lang_map.get(ext)
 
         try:
             content = await self.client.get_file_content(
@@ -330,7 +354,9 @@ class ExplorerScreen(Screen):
             if len(lines) > 500:
                 content = "\n".join(lines[:500]) + f"\n\n... ({len(lines) - 500} more lines)"
 
-            self.query_one("#preview-content", TextArea).text = content
+            preview = self.query_one("#preview-content", TextArea)
+            preview.language = language
+            preview.text = content
         except Exception as exc:
             self.query_one("#preview-content", TextArea).text = f"Error loading preview: {exc}"
 
@@ -405,7 +431,7 @@ class DownloadScreen(Screen):
 
     def compose(self) -> ComposeResult:
         yield Container(
-            Static("⬇ Downloading Files", id="download-title"),
+            Static("Downloading Files", id="download-title"),
             Center(ProgressBar(total=100, id="download-progress", show_percentage=False, show_eta=False)),
             Static("", id="download-percentage"),
             Static("Preparing...", id="download-status"),
