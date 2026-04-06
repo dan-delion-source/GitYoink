@@ -8,9 +8,7 @@ Browse any GitHub repo interactively, pick only the files you need, and download
 
 ---
 ## Video Demo
-## Video Demo
 <details>
-  <summary>Click to watch the demo</summary>
 
   [Watch Video](https://github.com/user-attachments/assets/1303561a-36fe-4482-8613-fc49f5e55c93)
 
